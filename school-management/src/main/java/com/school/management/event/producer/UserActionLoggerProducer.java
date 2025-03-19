@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserActionLoggerProducer {
 
-    private final KafkaTemplate<String, ActionRecord> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Value("${kafka.topic.teacher-action}")
     private String topic;
 
-    public UserActionLoggerProducer(KafkaTemplate<String, ActionRecord> kafkaTemplate) {
+    public UserActionLoggerProducer(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

@@ -9,7 +9,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 public class UserAction {
 
     @Id
@@ -19,4 +18,46 @@ public class UserAction {
     private Long userId;
     private String action;
     private LocalDateTime timestamp;
+
+    public UserAction() {
+    }
+
+    public UserAction(Long id, Long userId, String action, LocalDateTime timestamp) {
+        this.id = id;
+        this.userId = userId;
+        this.action = action;
+        this.timestamp = timestamp;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 }

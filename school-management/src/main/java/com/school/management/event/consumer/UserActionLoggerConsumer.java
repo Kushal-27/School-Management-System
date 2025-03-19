@@ -15,7 +15,7 @@ public class UserActionLoggerConsumer {
     @Autowired
     private UserActionRepository userActionRepository;
 
-    @KafkaListener(topics = "teacher-action", groupId = "teacher-activity-group")
+    @KafkaListener(topics = "user-action", groupId = "user-activity-group")
     public void consume(UserActionLoggerProducer.ActionRecord actionRecord) {
         UserAction userAction = new UserAction();
         userAction.setUserId(actionRecord.userId());
