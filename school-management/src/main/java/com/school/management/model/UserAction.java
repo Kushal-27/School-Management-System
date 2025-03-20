@@ -15,16 +15,16 @@ public class UserAction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    private String userName;
     private String action;
     private LocalDateTime timestamp;
 
     public UserAction() {
     }
 
-    public UserAction(Long id, Long userId, String action, LocalDateTime timestamp) {
+    public UserAction(Long id, String userName, String action, LocalDateTime timestamp) {
         this.id = id;
-        this.userId = userId;
+        this.userName = userName;
         this.action = action;
         this.timestamp = timestamp;
     }
@@ -37,12 +37,12 @@ public class UserAction {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getAction() {

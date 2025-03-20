@@ -13,7 +13,7 @@ public class TeacherActionScheduler {
     @Autowired
     private UserActionRepository userActionRepository;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 * * * * *")
     public void clearOldLogs() {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
 

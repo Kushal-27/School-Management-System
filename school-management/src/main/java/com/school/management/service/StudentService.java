@@ -1,15 +1,25 @@
 package com.school.management.service;
 
+import com.school.management.dto.StudentDTO;
+import com.school.management.dto.StudentRegistrationDTO;
 import com.school.management.event.producer.UserActionLoggerProducer;
+import com.school.management.exception.AlreadyExistsException;
+import com.school.management.exception.NotFoundException;
 import com.school.management.model.Student;
+import com.school.management.model.Teacher;
+import com.school.management.model.User;
 import com.school.management.repository.StudentRepository;
+import com.school.management.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -20,20 +30,49 @@ public class StudentService {
     @Autowired
     private UserActionLoggerProducer userActionLoggerProducer;
 
-    @Cacheable(value = "students", key = "#id")
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private StudentDTO mapToDTO(Student student) {
+        return new StudentDTO(student.getName(), student.getEmail(), student.getDateOfBirth(), student.getUser().getId(),
+                student.getId());
     }
 
-    public Student createStudent(Long userId, Student student) {
-        var studentResponse =  studentRepository.save(student);
-        userActionLoggerProducer.logUserAction(userId, "Created Student with id : " + studentResponse.getId());
-        return studentResponse;
+    @Cacheable(value = "students", key = "#id")
+    public StudentDTO getStudentById(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Student not found with id " + id));
+        return mapToDTO(student); // Return the mapped DTO
+    }
+
+    @Transactional
+    public StudentDTO createStudent(String userName, StudentRegistrationDTO studentDto) {
+        if (userRepository.existsByUsername(studentDto.getUsername())) {
+            throw new AlreadyExistsException("Username already taken");
+        }
+
+        User user = new User();
+        user.setUsername(studentDto.getUsername());
+        user.setPassword(passwordEncoder.encode(studentDto.getPassword()));
+        user.setRole(User.Role.TEACHER);
+        user = userRepository.save(user);
+
+        Student student = new Student();
+        student.setName(studentDto.getName());
+        student.setEmail(studentDto.getEmail());
+        student.setUser(user);
+        student.setDateOfBirth(studentDto.getDateOfBirth());
+        var savedStudent = studentRepository.save(student);
+
+        userActionLoggerProducer.logUserAction(userName, "Create Student with id :" + savedStudent.getId());
+        return mapToDTO(savedStudent);
     }
 
     @CachePut(value = "students", key = "#id")
-    public Student updateStudent(Long userId, Long id, Student studentDetails) {
+    public StudentDTO updateStudent(String userName, Long id, StudentRegistrationDTO studentDetails) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found with id " + id));
 
@@ -41,25 +80,27 @@ public class StudentService {
         student.setEmail(studentDetails.getEmail());
         student.setDateOfBirth(studentDetails.getDateOfBirth());
 
-        var updatedStudent = studentRepository.save(student);
-        userActionLoggerProducer.logUserAction(userId, "Updated Student with id : " + updatedStudent.getId());
+        Student updatedStudent = studentRepository.save(student);
+        userActionLoggerProducer.logUserAction(userName, "Updated Student with id : " + updatedStudent.getId());
 
-        return updatedStudent;
+        return mapToDTO(updatedStudent);
     }
 
     @CacheEvict(value = "students", key = "#id")
-    public void deleteStudent(Long userId, Long id) {
+    public void deleteStudent(String userName, Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+                .orElseThrow(() -> new NotFoundException("Student not found with id " + id));
 
         studentRepository.delete(student);
-
-        userActionLoggerProducer.logUserAction(userId, "Deleted Student with id : " + id);
-
+        userActionLoggerProducer.logUserAction(userName, "Deleted Student with id : " + id);
     }
 
     @Cacheable(value = "students")
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<StudentDTO> getAllStudents() {
+        System.out.println("-----------From database -----------------");
+        List<Student> students = studentRepository.findAll();
+        return students.stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 }

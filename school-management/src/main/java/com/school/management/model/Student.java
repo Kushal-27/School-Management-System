@@ -1,9 +1,6 @@
 package com.school.management.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Date;
 
@@ -20,10 +17,18 @@ public class Student {
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true) // Foreign Key
     private User user;
 
+    public Student() {}
+
+    public Student(String name, String email, Date dateOfBirth, User user) {
+        this.name = name;
+        this.email = email;
+        this.dateOfBirth = dateOfBirth;
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
@@ -62,17 +67,6 @@ public class Student {
     }
 
     public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Student() {
-    }
-
-    public Student(Long id, String name, String email, Date dateOfBirth, User user) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.dateOfBirth = dateOfBirth;
         this.user = user;
     }
 }

@@ -1,29 +1,22 @@
-package com.school.management.model;
+package com.school.management.dto;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
 
-@Entity
-public class Teacher {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TeacherDTO implements Serializable {
     private Long id;
-
     private String name;
     private String email;
     private String subject;
+    private Long userId;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id", nullable = false, unique = true) // Foreign Key
-    private User user;
+    public TeacherDTO() {}
 
-    public Teacher() {}
-
-    public Teacher(String name, String email, String subject, User user) {
+    public TeacherDTO(Long id, String name, String email, String subject, Long userId) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.subject = subject;
-        this.user = user;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -58,11 +51,11 @@ public class Teacher {
         this.subject = subject;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

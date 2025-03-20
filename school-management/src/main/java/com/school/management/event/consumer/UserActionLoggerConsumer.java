@@ -17,8 +17,10 @@ public class UserActionLoggerConsumer {
 
     @KafkaListener(topics = "user-action", groupId = "user-activity-group")
     public void consume(UserActionLoggerProducer.ActionRecord actionRecord) {
+
+        System.out.println("---------------------Consumer running--------------");
         UserAction userAction = new UserAction();
-        userAction.setUserId(actionRecord.userId());
+        userAction.setUserName(actionRecord.userName());
         userAction.setAction(actionRecord.actionDescription());
         userAction.setTimestamp(LocalDateTime.now());
 
