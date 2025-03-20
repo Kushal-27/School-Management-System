@@ -12,13 +12,16 @@ import java.time.LocalDateTime;
 @Service
 public class UserActionLoggerConsumer {
 
-    @Autowired
-    private UserActionRepository userActionRepository;
+    private final UserActionRepository userActionRepository;
+
+    public UserActionLoggerConsumer(UserActionRepository userActionRepository) {
+        this.userActionRepository = userActionRepository;
+    }
 
     @KafkaListener(topics = "user-action", groupId = "user-activity-group")
     public void consume(UserActionLoggerProducer.ActionRecord actionRecord) {
 
-        System.out.println("---------------------Consumer running--------------");
+//        System.out.println("---------------------Consumer running--------------");
         UserAction userAction = new UserAction();
         userAction.setUserName(actionRecord.userName());
         userAction.setAction(actionRecord.actionDescription());

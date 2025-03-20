@@ -1,6 +1,7 @@
 package com.school.management.service;
 
 import com.school.management.dto.LoginRequest;
+import com.school.management.exception.InvalidRequestException;
 import com.school.management.model.User;
 import com.school.management.repository.UserRepository;
 import com.school.management.security.JwtUtil;
@@ -11,14 +12,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthService(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String verifyLogin(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
@@ -26,7 +30,7 @@ public class AuthService {
         if (user != null && user.getUsername().equals(loginRequest.getUsername()) && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return jwtUtil.generateToken(user.getUsername());
         } else {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidRequestException("Invalid credentials");
         }
     }
 }

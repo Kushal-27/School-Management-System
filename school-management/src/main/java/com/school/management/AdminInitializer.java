@@ -32,7 +32,7 @@ public class AdminInitializer {
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole(User.Role.ADMIN);
             userRepository.save(admin);
-            System.out.println("Admin created from properties.");
+//            System.out.println("Admin created from properties.");
         }
     }
 }

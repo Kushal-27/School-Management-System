@@ -24,17 +24,21 @@ import java.util.stream.Collectors;
 @Service
 public class StudentService {
 
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    private UserActionLoggerProducer userActionLoggerProducer;
+    private final UserActionLoggerProducer userActionLoggerProducer;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public StudentService(StudentRepository studentRepository, UserActionLoggerProducer userActionLoggerProducer,
+                          UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.studentRepository = studentRepository;
+        this.userActionLoggerProducer = userActionLoggerProducer;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     private StudentDTO mapToDTO(Student student) {
         return new StudentDTO(student.getName(), student.getEmail(), student.getDateOfBirth(), student.getUser().getId(),
@@ -45,7 +49,7 @@ public class StudentService {
     public StudentDTO getStudentById(Long id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Student not found with id " + id));
-        return mapToDTO(student); // Return the mapped DTO
+        return mapToDTO(student);
     }
 
     @Transactional
@@ -97,7 +101,7 @@ public class StudentService {
 
     @Cacheable(value = "students")
     public List<StudentDTO> getAllStudents() {
-        System.out.println("-----------From database -----------------");
+//        System.out.println("-----------From database -----------------");
         List<Student> students = studentRepository.findAll();
         return students.stream()
                 .map(this::mapToDTO)

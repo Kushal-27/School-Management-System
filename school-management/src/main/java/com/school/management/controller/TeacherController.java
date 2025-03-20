@@ -21,11 +21,14 @@ import java.util.List;
 @RequestMapping("/teacher")
 public class TeacherController {
 
-    @Autowired
-    private TeacherService teacherService;
+    private final TeacherService teacherService;
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
+
+    public TeacherController(TeacherService teacherService, StudentService studentService) {
+        this.teacherService = teacherService;
+        this.studentService = studentService;
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER') and #id == authentication.principal.id")

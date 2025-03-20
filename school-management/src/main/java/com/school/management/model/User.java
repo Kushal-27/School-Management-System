@@ -11,12 +11,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)  // Ensure the username is unique
+    @Column(unique = true)
     private String username;
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role; // ADMIN, TEACHER, or STUDENT
+    private Role role;
 
     @OneToOne(mappedBy = "user")
     private Student student;

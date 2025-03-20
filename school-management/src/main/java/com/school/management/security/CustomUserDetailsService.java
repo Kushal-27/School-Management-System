@@ -1,9 +1,5 @@
 package com.school.management.security;
 
-import com.school.management.model.Student;
-import com.school.management.model.Teacher;
-import com.school.management.repository.StudentRepository;
-import com.school.management.repository.TeacherRepository;
 import com.school.management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;

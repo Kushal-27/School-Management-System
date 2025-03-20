@@ -18,25 +18,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidRequestException(InvalidRequestException ex) {
-        System.out.println("Error :" + ex);
         return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Request", ex.getMessage());
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExistsException(AlreadyExistsException ex) {
-        System.out.println("Error :" + ex);
         return buildResponse(HttpStatus.CONFLICT, "Resource Already Exists", ex.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFoundException(NotFoundException ex) {
-        System.out.println("Error :" + ex);
         return buildResponse(HttpStatus.NOT_FOUND, "Resource Not Found", ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex) {
-        System.out.println("Error :" + ex);
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex.getMessage());
     }
 

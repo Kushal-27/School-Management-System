@@ -23,18 +23,22 @@ import java.util.Optional;
 @Service
 public class TeacherService {
 
-    @Autowired
-    private TeacherRepository teacherRepository;
+    private final TeacherRepository teacherRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public TeacherService(TeacherRepository teacherRepository, UserRepository userRepository,
+                          PasswordEncoder passwordEncoder) {
+        this.teacherRepository = teacherRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Cacheable(value = "teachers", key = "#id")
     public TeacherDTO getTeacherById(Long id) {
-        System.out.println("----------------From database---------");
+//        System.out.println("----------------From database---------");
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Teacher not found with id " + id));
 
@@ -87,7 +91,7 @@ public class TeacherService {
 
     @Cacheable(value = "teachers")
     public List<TeacherDTO> getAllTeachers() {
-        System.out.println("----------------From Database-------------------");
+//        System.out.println("----------------From Database-------------------");
         List<Teacher> teachers = teacherRepository.findAll();
         return teachers.stream()
                 .map(this::convertToDTO)
